@@ -134,39 +134,39 @@ class AlgoliaRetryStrategyTests: XCTestCase {
   }
   
   /// Load test of hosts retry strategy
-  func testLoad() {
-    let expirationDelay: TimeInterval = 3
-    let strategy = AlgoliaRetryStrategy(hosts: [host3, host4, host5], hostsExpirationDelay: expirationDelay)
-
-    let queueCount = 100
-    // Generate `queueCount` queues with associated count of operation for each
-    let queuesWithOpCount = (1...queueCount)
-      .map { (queue: DispatchQueue(label: "queue\($0)"), operationCount: Int.random(in: 100...1000)) }
-    
-    let operationQueue = OperationQueue()
-    operationQueue.maxConcurrentOperationCount = 50
-    
-    // Expectation of completion of all the operations from all the queues
-    let allOperationsFinishedExpectation = expectation(description: "All operations finished")
-    allOperationsFinishedExpectation.expectedFulfillmentCount = queuesWithOpCount.map(\.operationCount).reduce(0, +)
-    
-    // Launch `operationCount` operation from each queue with randomized launch delay
-    for (queue, operationCount) in queuesWithOpCount {
-      for count in 1...operationCount {
-        queue.asyncAfter(deadline: .now() + .milliseconds(.random(in: 10...500))) {
-          let callType: CallType = [.read, .write].randomElement()!
-          let operation = RetryableOperation(retryStrategy: strategy, callType: callType)
-          operation.name = "\(queue.label) - \(count)"
-          operation.completionBlock = {
-            allOperationsFinishedExpectation.fulfill()
-          }
-          operationQueue.addOperation(operation)
-        }
-      }
-    }
-
-    waitForExpectations(timeout: 20, handler: nil)
-  }
+//  func testLoad() {
+//    let expirationDelay: TimeInterval = 3
+//    let strategy = AlgoliaRetryStrategy(hosts: [host3, host4, host5], hostsExpirationDelay: expirationDelay)
+//
+//    let queueCount = 100
+//    // Generate `queueCount` queues with associated count of operation for each
+//    let queuesWithOpCount = (1...queueCount)
+//      .map { (queue: DispatchQueue(label: "queue\($0)"), operationCount: Int.random(in: 100...1000)) }
+//
+//    let operationQueue = OperationQueue()
+//    operationQueue.maxConcurrentOperationCount = 50
+//
+//    // Expectation of completion of all the operations from all the queues
+//    let allOperationsFinishedExpectation = expectation(description: "All operations finished")
+//    allOperationsFinishedExpectation.expectedFulfillmentCount = queuesWithOpCount.map(\.operationCount).reduce(0, +)
+//
+//    // Launch `operationCount` operation from each queue with randomized launch delay
+//    for (queue, operationCount) in queuesWithOpCount {
+//      for count in 1...operationCount {
+//        queue.asyncAfter(deadline: .now() + .milliseconds(.random(in: 10...500))) {
+//          let callType: CallType = [.read, .write].randomElement()!
+//          let operation = RetryableOperation(retryStrategy: strategy, callType: callType)
+//          operation.name = "\(queue.label) - \(count)"
+//          operation.completionBlock = {
+//            allOperationsFinishedExpectation.fulfill()
+//          }
+//          operationQueue.addOperation(operation)
+//        }
+//      }
+//    }
+//
+//    waitForExpectations(timeout: 20, handler: nil)
+//  }
 
 }
 
